@@ -6,9 +6,9 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen bg-[#F5F7FA] font-sans flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-[#F5F7FA] font-sans flex flex-col">
       {/* Header */}
-      <header className="bg-white px-[100px] py-0 flex items-center justify-between border-b border-gray-100 flex-shrink-0 z-50">
+      <header className="bg-white px-[100px] py-0 flex items-center justify-between border-b border-gray-100 flex-shrink-0 sticky top-0 z-50">
         <div className="flex items-center h-16">
           {/* Logo */}
           <div className="flex items-center gap-2 mr-12">
@@ -53,7 +53,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-[#E8F0FF] to-[#F3F7FF] py-12 px-[100px] overflow-hidden flex-shrink-0">
+      <section className="relative bg-gradient-to-r from-[#E8F0FF] to-[#F3F7FF] py-24 px-[100px] overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute right-0 top-0 w-1/2 h-full pointer-events-none">
           <div className="absolute right-[-10%] top-[-20%] w-[800px] h-[800px] bg-blue-200/30 rounded-full blur-3xl"></div>
@@ -69,8 +69,8 @@ export default function Home() {
         </div>
 
         <div className="relative z-10">
-          <h1 className="text-[44px] font-bold text-[#4F6BFF] mb-4 tracking-wide">标桥快速编标</h1>
-          <p className="text-xl text-gray-700 mb-6 tracking-widest font-light">
+          <h1 className="text-[44px] font-bold text-[#4F6BFF] mb-6 tracking-wide">标桥快速编标</h1>
+          <p className="text-xl text-gray-700 mb-10 tracking-widest font-light">
             智能匹配资信标 / 精准定制技术标 / 零门槛流程引导
           </p>
           <div className="flex gap-4">
@@ -88,9 +88,9 @@ export default function Home() {
       </section>
 
       {/* Main Content */}
-      <main className="flex-1 px-[100px] py-8 flex flex-col overflow-hidden">
+      <main className="px-[100px] py-12">
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-6 flex-shrink-0">
+        <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-6 bg-[#4F6BFF] rounded-full"></div>
             <h2 className="text-xl font-bold text-gray-800 tracking-wide">最近项目</h2>
@@ -101,7 +101,7 @@ export default function Home() {
         </div>
 
         {/* Project Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Card 1 */}
           <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 p-6">
             <div className="flex items-start gap-3 mb-4">
