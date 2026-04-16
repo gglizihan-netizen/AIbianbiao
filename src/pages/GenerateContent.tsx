@@ -8,7 +8,7 @@ export default function GenerateContent() {
   return (
     <div className="h-screen bg-[#F5F7FA] font-sans flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="bg-white px-6 py-3 flex items-center justify-between border-b border-gray-100 flex-shrink-0">
+      <header className="bg-white px-6 py-3 flex items-center justify-between border-b border-gray-100 flex-shrink-0 relative">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/')} className="p-2 hover:bg-gray-50 rounded-lg text-gray-500">
             <Home size={20} />
@@ -35,29 +35,29 @@ export default function GenerateContent() {
         </div>
 
         {/* Stepper */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+          <div onClick={() => navigate('/create-technical-bid')} className="flex items-center gap-2 cursor-pointer hover:opacity-80">
             <div className="w-6 h-6 rounded-full border border-blue-600 text-blue-600 flex items-center justify-center text-xs font-medium">
               <Check size={14} />
             </div>
             <span className="text-sm text-gray-600">创建投标方案</span>
           </div>
           <div className="w-8 border-t border-dashed border-gray-300 mx-1"></div>
-          <div className="flex items-center gap-2">
+          <div onClick={() => navigate('/confirm-requirements')} className="flex items-center gap-2 cursor-pointer hover:opacity-80">
             <div className="w-6 h-6 rounded-full border border-blue-600 text-blue-600 flex items-center justify-center text-xs font-medium">
               <Check size={14} />
             </div>
             <span className="text-sm text-gray-600">确认招标要求</span>
           </div>
           <div className="w-8 border-t border-dashed border-gray-300 mx-1"></div>
-          <div className="flex items-center gap-2">
+          <div onClick={() => navigate('/generate-directory')} className="flex items-center gap-2 cursor-pointer hover:opacity-80">
             <div className="w-6 h-6 rounded-full border border-blue-600 text-blue-600 flex items-center justify-center text-xs font-medium">
               <Check size={14} />
             </div>
             <span className="text-sm text-gray-600">生成目录</span>
           </div>
           <div className="w-8 border-t border-dashed border-gray-300 mx-1"></div>
-          <div className="flex items-center gap-2">
+          <div onClick={() => navigate('/generate-content')} className="flex items-center gap-2 cursor-pointer hover:opacity-80">
             <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-medium">4</div>
             <span className="text-sm font-medium text-blue-600">生成正文</span>
           </div>

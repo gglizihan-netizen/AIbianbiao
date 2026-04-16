@@ -72,7 +72,7 @@ export default function CreateTechnicalBid() {
   return (
     <div className="min-h-screen bg-[#F5F7FA] font-sans flex flex-col">
       {/* Header */}
-      <header className="bg-white px-6 py-3 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50">
+      <header className="bg-white px-6 py-3 flex items-center justify-between border-b border-gray-100 sticky top-0 z-50 relative">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/')} className="p-2 hover:bg-gray-50 rounded-lg text-gray-500">
             <Home size={20} />
@@ -85,23 +85,23 @@ export default function CreateTechnicalBid() {
         </div>
 
         {/* Stepper */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+          <div onClick={() => navigate('/create-technical-bid')} className="flex items-center gap-2 cursor-pointer hover:opacity-80">
             <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-medium">1</div>
             <span className="text-sm font-medium text-blue-600">创建投标方案</span>
           </div>
           <div className="w-8 border-t border-dashed border-gray-300 mx-1"></div>
-          <div className="flex items-center gap-2 opacity-50">
+          <div onClick={() => navigate('/confirm-requirements')} className="flex items-center gap-2 opacity-50 cursor-pointer hover:opacity-100">
             <div className="w-6 h-6 rounded-full border border-gray-300 text-gray-500 flex items-center justify-center text-xs font-medium">2</div>
             <span className="text-sm text-gray-500">确认招标要求</span>
           </div>
           <div className="w-8 border-t border-dashed border-gray-300 mx-1"></div>
-          <div className="flex items-center gap-2 opacity-50">
+          <div onClick={() => navigate('/generate-directory')} className="flex items-center gap-2 opacity-50 cursor-pointer hover:opacity-100">
             <div className="w-6 h-6 rounded-full border border-gray-300 text-gray-500 flex items-center justify-center text-xs font-medium">3</div>
             <span className="text-sm text-gray-500">生成目录</span>
           </div>
           <div className="w-8 border-t border-dashed border-gray-300 mx-1"></div>
-          <div className="flex items-center gap-2 opacity-50">
+          <div onClick={() => navigate('/generate-content')} className="flex items-center gap-2 opacity-50 cursor-pointer hover:opacity-100">
             <div className="w-6 h-6 rounded-full border border-gray-300 text-gray-500 flex items-center justify-center text-xs font-medium">4</div>
             <span className="text-sm text-gray-500">生成正文</span>
           </div>
