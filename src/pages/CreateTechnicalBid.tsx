@@ -38,16 +38,16 @@ const FontSettingRow = ({ title, hasCollapse = false }: { title: string, hasColl
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-500 w-12">首行缩进</span>
-        <div className="flex-1 flex items-center border border-gray-200 rounded bg-white overflow-hidden">
+        <div className="flex-1 flex items-center border border-black/[0.06] rounded-lg bg-white overflow-hidden hover:border-black/[0.1] transition-colors">
           <input type="text" defaultValue="0" className="w-full px-2 py-1.5 text-sm outline-none" />
-          <span className="text-xs text-gray-400 px-2 bg-gray-50 border-l border-gray-200 h-full flex items-center">字符</span>
+          <span className="text-xs text-gray-400 px-2 bg-black/[0.02] border-l border-black/[0.04] h-full flex items-center">字符</span>
         </div>
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-500 w-12">行间距</span>
-        <div className="flex-1 flex items-center border border-gray-200 rounded bg-white overflow-hidden">
+        <div className="flex-1 flex items-center border border-black/[0.06] rounded-lg bg-white overflow-hidden hover:border-black/[0.1] transition-colors">
           <input type="text" defaultValue="24" className="w-full px-2 py-1.5 text-sm outline-none" />
-          <div className="flex items-center px-1 bg-gray-50 border-l border-gray-200 h-full cursor-pointer">
+          <div className="flex items-center px-1 bg-black/[0.02] border-l border-black/[0.04] h-full cursor-pointer hover:bg-black/[0.05]">
              <span className="text-xs text-gray-400 mr-1">磅</span>
              <ChevronDown size={12} className="text-gray-400" />
           </div>
@@ -68,6 +68,7 @@ const FontSettingRow = ({ title, hasCollapse = false }: { title: string, hasColl
 
 export default function CreateTechnicalBid() {
   const navigate = useNavigate();
+  const [isStyleExpanded, setIsStyleExpanded] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] font-sans flex flex-col">
@@ -130,8 +131,8 @@ export default function CreateTechnicalBid() {
         {/* Top Section: Upload */}
         <div className="mb-8">
           <h3 className="text-sm font-bold text-gray-800 mb-3">导入招标文件</h3>
-          <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-6 w-[320px] relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-blue-400 text-white text-xs px-3 py-1 rounded-bl-lg flex items-center gap-1">
+          <div className="bg-blue-50/40 border border-blue-100/60 rounded-2xl p-6 w-[320px] relative overflow-hidden transition-all hover:bg-blue-50/60 hover:shadow-[0_4px_20px_-4px_rgba(79,107,255,0.08)]">
+            <div className="absolute top-0 right-0 bg-blue-500/90 text-white text-xs px-3 py-1 rounded-bl-xl flex items-center gap-1 backdrop-blur-sm">
               工程类 <ChevronDown size={12} />
             </div>
             <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md shadow-blue-500/20">
@@ -154,12 +155,12 @@ export default function CreateTechnicalBid() {
             </button>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] border border-black/[0.04] overflow-hidden">
             {/* Toolbar */}
-            <div className="bg-blue-50/50 border-b border-gray-200 px-4 py-3 flex items-center gap-4">
+            <div className="bg-blue-50/30 border-b border-black/[0.04] px-4 py-3 flex items-center gap-4">
               <span className="text-sm font-medium text-gray-700">文件样式方案</span>
               <div className="flex-1 max-w-xs relative">
-                <select className="w-full appearance-none border border-gray-300 rounded-md py-1.5 pl-3 pr-8 text-sm bg-white outline-none focus:border-blue-500">
+                <select className="w-full appearance-none border border-black/[0.06] rounded-lg py-1.5 pl-3 pr-8 text-sm bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
                   <option>方案名称</option>
                 </select>
                 <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -167,9 +168,10 @@ export default function CreateTechnicalBid() {
               <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">保存方案</button>
             </div>
 
-            <div className="flex">
-              {/* Left Column: Visual Settings */}
-              <div className="w-[45%] border-r border-gray-200 p-6 bg-[#FAFBFC]">
+            <div className={`relative transition-all duration-300 ${isStyleExpanded ? '' : 'max-h-[380px] overflow-hidden'}`}>
+              <div className="flex">
+                {/* Left Column: Visual Settings */}
+              <div className="w-[45%] border-r border-black/[0.04] p-6 bg-[#FAFCFF]/50">
                 {/* 正文设置 */}
                 <div className="mb-8">
                   <h4 className="text-sm font-bold text-gray-800 mb-4">正文设置</h4>
@@ -203,8 +205,8 @@ export default function CreateTechnicalBid() {
                       <div className="w-5/6 h-2 bg-blue-200 rounded-sm"></div>
                       <div className="mt-auto text-center text-xs text-blue-600 font-medium">纯文字</div>
                     </div>
-                    <div className="w-24 h-32 border border-gray-200 rounded-lg bg-white relative p-2 flex gap-1.5 cursor-pointer hover:border-blue-300">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full"></div>
+                    <div className="w-24 h-32 border border-black/[0.06] rounded-xl bg-white relative p-2 flex gap-1.5 cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
                       <div className="w-1/3 h-full bg-gray-100 rounded-sm"></div>
                       <div className="flex-1 flex flex-col gap-1.5">
                         <div className="w-full h-2 bg-gray-100 rounded-sm"></div>
@@ -213,8 +215,8 @@ export default function CreateTechnicalBid() {
                       </div>
                       <div className="absolute bottom-2 left-0 w-full text-center text-xs text-gray-500">左右布局</div>
                     </div>
-                    <div className="w-24 h-32 border border-gray-200 rounded-lg bg-white relative p-2 flex flex-col gap-1.5 cursor-pointer hover:border-blue-300">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full"></div>
+                    <div className="w-24 h-32 border border-black/[0.06] rounded-xl bg-white relative p-2 flex flex-col gap-1.5 cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
                       <div className="w-full h-1/2 bg-gray-100 rounded-sm"></div>
                       <div className="w-full h-2 bg-gray-100 rounded-sm"></div>
                       <div className="w-full h-2 bg-gray-100 rounded-sm"></div>
@@ -240,8 +242,8 @@ export default function CreateTechnicalBid() {
                     </div>
                   </div>
                   <div className="grid grid-cols-4 gap-3">
-                    <div className="border border-gray-200 bg-white rounded-lg p-3 relative cursor-pointer hover:border-blue-300">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full"></div>
+                    <div className="border border-black/[0.06] bg-white rounded-xl p-3 relative cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
                       <div className="text-[10px] text-gray-600 leading-tight space-y-1">
                         <div><span className="font-bold">1</span> 标题1</div>
                         <div><span className="font-bold">1.1</span> 标题2</div>
@@ -251,8 +253,8 @@ export default function CreateTechnicalBid() {
                         <div><span className="font-bold">1.1.1.1.1.1</span> 标题6</div>
                       </div>
                     </div>
-                    <div className="border border-gray-200 bg-white rounded-lg p-3 relative cursor-pointer hover:border-blue-300">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full"></div>
+                    <div className="border border-black/[0.06] bg-white rounded-xl p-3 relative cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
                       <div className="text-[10px] text-gray-600 leading-tight space-y-1">
                         <div><span className="font-bold">1</span> 标题1</div>
                         <div><span className="font-bold">1.1</span> 标题2</div>
@@ -262,8 +264,8 @@ export default function CreateTechnicalBid() {
                         <div><span className="font-bold">1.1.1.1.1.1</span> 标题6</div>
                       </div>
                     </div>
-                    <div className="border border-gray-200 bg-white rounded-lg p-3 relative cursor-pointer hover:border-blue-300">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full"></div>
+                    <div className="border border-black/[0.06] bg-white rounded-xl p-3 relative cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
                       <div className="text-[10px] text-gray-600 leading-tight space-y-1">
                         <div><span className="font-bold">1</span> 标题1</div>
                         <div><span className="font-bold">1.1</span> 标题2</div>
@@ -273,7 +275,7 @@ export default function CreateTechnicalBid() {
                         <div><span className="font-bold">1.1.1.1.1.1</span> 标题6</div>
                       </div>
                     </div>
-                    <div className="border border-dashed border-gray-300 bg-gray-50 rounded-lg p-3 flex items-center justify-center cursor-pointer hover:bg-gray-100">
+                    <div className="border border-dashed border-gray-300 bg-gray-50 rounded-xl p-3 flex items-center justify-center cursor-pointer hover:bg-gray-100">
                       <span className="text-xs text-gray-500">自定义序号</span>
                     </div>
                   </div>
@@ -283,7 +285,7 @@ export default function CreateTechnicalBid() {
                 <div className="mb-8">
                   <h4 className="text-sm font-bold text-gray-800 mb-4">封面样式</h4>
                   <div className="grid grid-cols-4 gap-4">
-                    <div className="aspect-[1/1.4] border-2 border-blue-500 rounded-lg relative overflow-hidden cursor-pointer">
+                    <div className="aspect-[1/1.4] border-2 border-blue-500 rounded-xl relative overflow-hidden cursor-pointer shadow-[0_4px_12px_rgba(79,107,255,0.08)]">
                       <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
                       <div className="w-full h-full bg-white flex flex-col items-center justify-center p-2">
                          <div className="text-[8px] text-gray-400 mb-2">XX 项目</div>
@@ -292,8 +294,8 @@ export default function CreateTechnicalBid() {
                          <div className="w-full h-0.5 bg-blue-200"></div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-gray-200 rounded-lg relative overflow-hidden cursor-pointer hover:border-blue-300">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full z-10"></div>
+                    <div className="aspect-[1/1.4] border border-black/[0.06] rounded-xl relative overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
                       <div className="w-full h-full bg-white flex flex-col items-center justify-center p-2 relative">
                          <div className="absolute top-0 left-0 w-full h-8 bg-blue-50"></div>
                          <div className="text-[8px] text-gray-400 mb-2 z-10">XX 项目</div>
@@ -301,8 +303,8 @@ export default function CreateTechnicalBid() {
                          <div className="absolute bottom-0 left-0 w-full h-6 bg-blue-100 rounded-t-full"></div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-gray-200 rounded-lg relative overflow-hidden cursor-pointer hover:border-blue-300">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full z-10"></div>
+                    <div className="aspect-[1/1.4] border border-black/[0.06] rounded-xl relative overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
                       <div className="w-full h-full bg-white flex flex-col items-center p-2 relative">
                          <div className="text-[8px] text-gray-400 mt-2 mb-1">XX 项目</div>
                          <div className="text-sm font-bold text-gray-800 mb-2">投标文件</div>
@@ -314,8 +316,8 @@ export default function CreateTechnicalBid() {
                          <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-blue-600 to-blue-400"></div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-gray-200 rounded-lg relative overflow-hidden cursor-pointer hover:border-blue-300">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full z-10"></div>
+                    <div className="aspect-[1/1.4] border border-black/[0.06] rounded-xl relative overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
                       <div className="w-full h-full bg-white flex flex-col items-center p-2 relative">
                          <div className="text-[8px] text-gray-400 mt-2 mb-1">XX 项目</div>
                          <div className="text-sm font-bold text-blue-500 mb-2">投标文件</div>
@@ -325,8 +327,8 @@ export default function CreateTechnicalBid() {
                          </div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-gray-200 rounded-lg relative overflow-hidden cursor-pointer hover:border-blue-300">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full z-10"></div>
+                    <div className="aspect-[1/1.4] border border-black/[0.06] rounded-xl relative overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
                       <div className="w-full h-full bg-white flex flex-col items-center p-2 relative">
                          <div className="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
                          <div className="text-[8px] text-gray-400 mt-4 mb-1">XX 项目</div>
@@ -334,8 +336,8 @@ export default function CreateTechnicalBid() {
                          <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-gray-200 bg-gray-50 rounded-lg relative flex items-center justify-center cursor-pointer hover:bg-gray-100">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-gray-300 bg-white rounded-full z-10"></div>
+                    <div className="aspect-[1/1.4] border border-black/[0.06] bg-gray-50 rounded-xl relative flex items-center justify-center cursor-pointer hover:bg-white hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
+                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
                       <span className="text-sm text-gray-500 font-medium">无封面</span>
                     </div>
                   </div>
@@ -362,37 +364,37 @@ export default function CreateTechnicalBid() {
                   <div className="grid grid-cols-3 gap-6">
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500 w-12">纸张方向</span>
-                      <div className="flex-1 border border-gray-200 rounded px-2 py-1.5 flex items-center justify-between">
+                      <div className="flex-1 border border-black/[0.06] rounded-lg px-2 py-1.5 flex items-center justify-between bg-white/50 hover:border-black/[0.1] transition-colors cursor-pointer">
                         <span className="text-sm">竖</span>
                         <ChevronDown size={14} className="text-gray-400" />
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500 w-12">上边距</span>
-                      <div className="flex-1 flex items-center border border-gray-200 rounded overflow-hidden">
-                        <input type="text" defaultValue="2.54" className="w-full px-2 py-1.5 text-sm outline-none" />
-                        <span className="text-xs text-gray-400 px-2 bg-gray-50 border-l border-gray-200 h-full flex items-center">厘米</span>
+                      <div className="flex-1 flex items-center border border-black/[0.06] rounded-lg overflow-hidden bg-white/50 hover:border-black/[0.1] transition-colors">
+                        <input type="text" defaultValue="2.54" className="w-full px-2 py-1.5 text-sm outline-none bg-transparent" />
+                        <span className="text-xs text-gray-400 px-2 bg-black/[0.02] border-l border-black/[0.04] h-full flex items-center">厘米</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500 w-12">下边距</span>
-                      <div className="flex-1 flex items-center border border-gray-200 rounded overflow-hidden">
-                        <input type="text" defaultValue="2.54" className="w-full px-2 py-1.5 text-sm outline-none" />
-                        <span className="text-xs text-gray-400 px-2 bg-gray-50 border-l border-gray-200 h-full flex items-center">厘米</span>
+                      <div className="flex-1 flex items-center border border-black/[0.06] rounded-lg overflow-hidden bg-white/50 hover:border-black/[0.1] transition-colors">
+                        <input type="text" defaultValue="2.54" className="w-full px-2 py-1.5 text-sm outline-none bg-transparent" />
+                        <span className="text-xs text-gray-400 px-2 bg-black/[0.02] border-l border-black/[0.04] h-full flex items-center">厘米</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500 w-12">左边距</span>
-                      <div className="flex-1 flex items-center border border-gray-200 rounded overflow-hidden">
-                        <input type="text" defaultValue="3.18" className="w-full px-2 py-1.5 text-sm outline-none" />
-                        <span className="text-xs text-gray-400 px-2 bg-gray-50 border-l border-gray-200 h-full flex items-center">厘米</span>
+                      <div className="flex-1 flex items-center border border-black/[0.06] rounded-lg overflow-hidden bg-white/50 hover:border-black/[0.1] transition-colors">
+                        <input type="text" defaultValue="3.18" className="w-full px-2 py-1.5 text-sm outline-none bg-transparent" />
+                        <span className="text-xs text-gray-400 px-2 bg-black/[0.02] border-l border-black/[0.04] h-full flex items-center">厘米</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500 w-12">右边距</span>
-                      <div className="flex-1 flex items-center border border-gray-200 rounded overflow-hidden">
-                        <input type="text" defaultValue="3.18" className="w-full px-2 py-1.5 text-sm outline-none" />
-                        <span className="text-xs text-gray-400 px-2 bg-gray-50 border-l border-gray-200 h-full flex items-center">厘米</span>
+                      <div className="flex-1 flex items-center border border-black/[0.06] rounded-lg overflow-hidden bg-white/50 hover:border-black/[0.1] transition-colors">
+                        <input type="text" defaultValue="3.18" className="w-full px-2 py-1.5 text-sm outline-none bg-transparent" />
+                        <span className="text-xs text-gray-400 px-2 bg-black/[0.02] border-l border-black/[0.04] h-full flex items-center">厘米</span>
                       </div>
                     </div>
                   </div>
@@ -431,13 +433,27 @@ export default function CreateTechnicalBid() {
                   <FontSettingRow title="目录正文" hasCollapse />
                 </div>
 
-                <div className="flex justify-center mt-4">
-                  <button className="text-blue-500 text-sm flex items-center gap-1 hover:text-blue-600">
-                    收起 <ChevronUp size={16} />
-                  </button>
-                </div>
-
               </div>
+            </div>
+          </div>
+            
+            {/* Fade Overlay when collapsed */}
+            {!isStyleExpanded && (
+              <div className="absolute bottom-[46px] left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+            )}
+            
+            {/* Expand / Collapse Button */}
+            <div className="border-t border-black/[0.04] flex justify-center py-2.5 bg-gray-50/40 w-full relative z-10 transition-colors hover:bg-gray-50/80">
+              <button 
+                onClick={() => setIsStyleExpanded(!isStyleExpanded)}
+                className="text-blue-500 text-sm flex items-center gap-1 hover:text-blue-700 font-medium transition-colors"
+              >
+                {isStyleExpanded ? (
+                  <>收起 <ChevronUp size={16} /></>
+                ) : (
+                  <>展开全部样式 <ChevronDown size={16} /></>
+                )}
+              </button>
             </div>
           </div>
         </div>
@@ -445,7 +461,7 @@ export default function CreateTechnicalBid() {
         {/* Bottom Section: Pages & Materials */}
         <div className="mt-8 space-y-6">
           {/* 方案页数 */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] border border-black/[0.04] p-6">
             <h3 className="text-sm font-bold text-gray-800 mb-6">方案页数</h3>
             <div className="relative px-2 mb-8">
               <div className="h-1 bg-blue-100 rounded-full w-full">
@@ -472,8 +488,8 @@ export default function CreateTechnicalBid() {
           </div>
 
           {/* 标书素材 */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <div className="bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] border border-black/[0.04] overflow-hidden">
+            <div className="px-6 py-4 border-b border-black/[0.04] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <h3 className="text-sm font-bold text-gray-800">标书素材</h3>
                 <span className="text-xs text-gray-400">上传本项目相关的素材，ai生成内容时将自动进行参考</span>
@@ -502,7 +518,7 @@ export default function CreateTechnicalBid() {
       </main>
 
       {/* Footer Actions */}
-      <footer className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 py-3 px-6 flex justify-center z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <footer className="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-black/[0.04] py-3 px-6 flex justify-center z-50 shadow-[0_-8px_30px_rgba(0,0,0,0.03)]">
         <button 
           onClick={() => navigate('/confirm-requirements')}
           className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-2 rounded-lg font-medium transition-colors"
