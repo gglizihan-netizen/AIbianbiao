@@ -2,13 +2,24 @@ import React, { useState } from 'react';
 import { Home, ChevronRight, UploadCloud, HelpCircle, ChevronDown, AlignLeft, AlignCenter, AlignRight, AlignJustify, Upload, Info, RefreshCw, Diamond, ChevronUp, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const FontSettingRow = ({ title, hasCollapse = false }: { title: string, hasCollapse?: boolean }) => (
+const FontSettingRow = ({ title, hasCollapse = false }: { title: string, hasCollapse?: boolean }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [alignment, setAlignment] = useState('left');
+
+  return (
   <div className="mb-6">
-    <div className="flex items-center justify-between mb-3">
+    <div 
+      className={`flex items-center justify-between mb-3 ${hasCollapse ? 'cursor-pointer select-none' : ''}`}
+      onClick={() => hasCollapse && setIsCollapsed(!isCollapsed)}
+    >
       <span className="text-sm font-medium text-gray-800">{title}</span>
-      {hasCollapse && <ChevronDown size={16} className="text-gray-400" />}
+      {hasCollapse && (
+        <span className={`transition-transform duration-200 ${isCollapsed ? '-rotate-90' : ''}`}>
+          <ChevronDown size={16} className="text-gray-400" />
+        </span>
+      )}
     </div>
-    <div className="grid grid-cols-3 gap-4">
+    <div className={`grid grid-cols-3 gap-4 transition-all duration-300 ${isCollapsed ? 'hidden' : 'block'}`}>
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-500 w-12">字体</span>
         <div className="flex-1 border border-gray-200 rounded px-2 py-1.5 flex items-center justify-between bg-white">
@@ -56,19 +67,39 @@ const FontSettingRow = ({ title, hasCollapse = false }: { title: string, hasColl
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-500 w-12">对齐方式</span>
         <div className="flex-1 flex items-center gap-1">
-          <button className="p-1.5 bg-gray-100 rounded hover:bg-gray-200"><AlignLeft size={14} className="text-gray-600" /></button>
-          <button className="p-1.5 hover:bg-gray-100 rounded"><AlignCenter size={14} className="text-gray-600" /></button>
-          <button className="p-1.5 hover:bg-gray-100 rounded"><AlignRight size={14} className="text-gray-600" /></button>
-          <button className="p-1.5 hover:bg-gray-100 rounded"><AlignJustify size={14} className="text-gray-600" /></button>
+          <button 
+            onClick={() => setAlignment('left')}
+            className={`p-1.5 rounded transition-colors ${alignment === 'left' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}
+          ><AlignLeft size={14} /></button>
+          <button 
+             onClick={() => setAlignment('center')}
+            className={`p-1.5 rounded transition-colors ${alignment === 'center' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}
+          ><AlignCenter size={14} /></button>
+          <button 
+            onClick={() => setAlignment('right')}
+            className={`p-1.5 rounded transition-colors ${alignment === 'right' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}
+          ><AlignRight size={14} /></button>
+          <button 
+            onClick={() => setAlignment('justify')}
+            className={`p-1.5 rounded transition-colors ${alignment === 'justify' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}
+          ><AlignJustify size={14} /></button>
         </div>
       </div>
     </div>
   </div>
-);
+  );
+};
 
 export default function CreateTechnicalBid() {
   const navigate = useNavigate();
   const [isStyleExpanded, setIsStyleExpanded] = useState(false);
+  const [generateTable, setGenerateTable] = useState(true);
+  const [imagesAndText, setImagesAndText] = useState(true);
+  const [imageSource, setImageSource] = useState('network');
+  const [layout, setLayout] = useState('pure');
+  const [subject, setSubject] = useState('none');
+  const [numberingStyle, setNumberingStyle] = useState(0);
+  const [coverStyle, setCoverStyle] = useState(0);
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] font-sans flex flex-col">
@@ -176,58 +207,70 @@ export default function CreateTechnicalBid() {
                 <div className="mb-8">
                   <h4 className="text-sm font-bold text-gray-800 mb-4">正文设置</h4>
                   <div className="flex items-center gap-6 mb-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2 cursor-pointer" onClick={() => setGenerateTable(!generateTable)}>
                       <span className="text-sm text-gray-700">生成表格</span>
-                      <div className="w-8 h-4 bg-blue-600 rounded-full relative">
-                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full"></div>
+                      <div className={`w-8 h-4 rounded-full relative transition-colors ${generateTable ? 'bg-blue-600' : 'bg-gray-300'}`}>
+                        <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${generateTable ? 'right-0.5' : 'left-0.5'}`}></div>
                       </div>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2 cursor-pointer" onClick={() => setImagesAndText(!imagesAndText)}>
                       <span className="text-sm text-gray-700">图文并茂</span>
-                      <div className="w-8 h-4 bg-blue-600 rounded-full relative">
-                        <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full"></div>
+                      <div className={`w-8 h-4 rounded-full relative transition-colors ${imagesAndText ? 'bg-blue-600' : 'bg-gray-300'}`}>
+                        <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${imagesAndText ? 'right-0.5' : 'left-0.5'}`}></div>
                       </div>
                     </label>
                     <div className="flex gap-2">
-                       <span className="text-[10px] text-gray-500 border border-gray-200 rounded px-1.5 py-0.5 bg-white">网络图片</span>
-                       <span className="text-[10px] text-blue-500 border border-blue-200 rounded px-1.5 py-0.5 bg-blue-50">私人图库</span>
-                       <span className="text-[10px] text-blue-500 border border-blue-200 rounded px-1.5 py-0.5 bg-blue-50 flex items-center gap-0.5">智能图形 <Upload size={10}/></span>
+                       <span onClick={() => setImageSource('network')} className={`cursor-pointer text-[10px] border rounded px-1.5 py-0.5 transition-colors ${imageSource === 'network' ? 'text-blue-500 border-blue-200 bg-blue-50' : 'text-gray-500 border-gray-200 bg-white hover:bg-gray-50'}`}>网络图片</span>
+                       <span onClick={() => setImageSource('private')} className={`cursor-pointer text-[10px] border rounded px-1.5 py-0.5 transition-colors ${imageSource === 'private' ? 'text-blue-500 border-blue-200 bg-blue-50' : 'text-gray-500 border-gray-200 bg-white hover:bg-gray-50'}`}>私人图库</span>
+                       <span onClick={() => setImageSource('smart')} className={`cursor-pointer text-[10px] border rounded px-1.5 py-0.5 flex items-center gap-0.5 transition-colors ${imageSource === 'smart' ? 'text-blue-500 border-blue-200 bg-blue-50' : 'text-gray-500 border-gray-200 bg-white hover:bg-gray-50'}`}>智能图形 <Upload size={10}/></span>
                     </div>
                   </div>
                   
                   <div className="mb-2 text-sm text-gray-700">布局方式</div>
                   <div className="flex gap-4 mb-4">
-                    <div className="w-24 h-32 border-2 border-blue-500 rounded-lg bg-blue-50 relative p-2 flex flex-col gap-1.5 cursor-pointer">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white">✓</div>
-                      <div className="w-full h-2 bg-blue-200 rounded-sm"></div>
-                      <div className="w-3/4 h-2 bg-blue-200 rounded-sm"></div>
-                      <div className="w-full h-2 bg-blue-200 rounded-sm"></div>
-                      <div className="w-5/6 h-2 bg-blue-200 rounded-sm"></div>
-                      <div className="mt-auto text-center text-xs text-blue-600 font-medium">纯文字</div>
+                    <div onClick={() => setLayout('pure')} className={`w-24 h-32 rounded-lg relative p-2 flex flex-col gap-1.5 cursor-pointer transition-all ${layout === 'pure' ? 'border-2 border-blue-500 bg-blue-50 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border border-black/[0.06] bg-white hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                      {layout === 'pure' ? (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white">✓</div>
+                      ) : (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
+                      )}
+                      <div className={`w-full h-2 rounded-sm ${layout === 'pure' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
+                      <div className={`w-3/4 h-2 rounded-sm ${layout === 'pure' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
+                      <div className={`w-full h-2 rounded-sm ${layout === 'pure' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
+                      <div className={`w-5/6 h-2 rounded-sm ${layout === 'pure' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
+                      <div className={`mt-auto text-center text-xs font-medium ${layout === 'pure' ? 'text-blue-600' : 'text-gray-500'}`}>纯文字</div>
                     </div>
-                    <div className="w-24 h-32 border border-black/[0.06] rounded-xl bg-white relative p-2 flex gap-1.5 cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
-                      <div className="w-1/3 h-full bg-gray-100 rounded-sm"></div>
+                    <div onClick={() => setLayout('lr')} className={`w-24 h-32 rounded-xl relative p-2 flex gap-1.5 cursor-pointer transition-all ${layout === 'lr' ? 'border-2 border-blue-500 bg-blue-50 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border border-black/[0.06] bg-white hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                      {layout === 'lr' ? (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                      ) : (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                      )}
+                      <div className={`w-1/3 h-full rounded-sm ${layout === 'lr' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
                       <div className="flex-1 flex flex-col gap-1.5">
-                        <div className="w-full h-2 bg-gray-100 rounded-sm"></div>
-                        <div className="w-full h-2 bg-gray-100 rounded-sm"></div>
-                        <div className="w-full h-2 bg-gray-100 rounded-sm"></div>
+                        <div className={`w-full h-2 rounded-sm ${layout === 'lr' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
+                        <div className={`w-full h-2 rounded-sm ${layout === 'lr' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
+                        <div className={`w-full h-2 rounded-sm ${layout === 'lr' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
                       </div>
-                      <div className="absolute bottom-2 left-0 w-full text-center text-xs text-gray-500">左右布局</div>
+                      <div className={`absolute bottom-2 left-0 w-full text-center text-xs font-medium ${layout === 'lr' ? 'text-blue-600' : 'text-gray-500'}`}>左右布局</div>
                     </div>
-                    <div className="w-24 h-32 border border-black/[0.06] rounded-xl bg-white relative p-2 flex flex-col gap-1.5 cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
-                      <div className="w-full h-1/2 bg-gray-100 rounded-sm"></div>
-                      <div className="w-full h-2 bg-gray-100 rounded-sm"></div>
-                      <div className="w-full h-2 bg-gray-100 rounded-sm"></div>
-                      <div className="absolute bottom-2 left-0 w-full text-center text-xs text-gray-500">上下布局</div>
+                    <div onClick={() => setLayout('tb')} className={`w-24 h-32 rounded-xl relative p-2 flex flex-col gap-1.5 cursor-pointer transition-all ${layout === 'tb' ? 'border-2 border-blue-500 bg-blue-50 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border border-black/[0.06] bg-white hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                      {layout === 'tb' ? (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                      ) : (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                      )}
+                      <div className={`w-full h-1/2 rounded-sm ${layout === 'tb' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
+                      <div className={`w-full h-2 rounded-sm ${layout === 'tb' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
+                      <div className={`w-full h-2 rounded-sm ${layout === 'tb' ? 'bg-blue-200' : 'bg-gray-100'}`}></div>
+                      <div className={`absolute bottom-2 left-0 w-full text-center text-xs font-medium ${layout === 'tb' ? 'text-blue-600' : 'text-gray-500'}`}>上下布局</div>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-700">正文主语</span>
-                    <span className="text-xs text-blue-600 border border-blue-200 bg-blue-50 px-2 py-0.5 rounded-full">无主语</span>
-                    <span className="text-xs text-gray-400 flex items-center gap-1">我单位 <span className="w-3 h-3 border border-gray-300 rounded-sm flex items-center justify-center">✎</span></span>
+                    <span onClick={() => setSubject('none')} className={`cursor-pointer text-xs border px-2 py-0.5 rounded-full transition-colors ${subject === 'none' ? 'text-blue-600 border-blue-200 bg-blue-50' : 'text-gray-500 border-gray-200 bg-white hover:bg-gray-50'}`}>无主语</span>
+                    <span onClick={() => setSubject('myUnit')} className={`cursor-pointer text-xs border px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors ${subject === 'myUnit' ? 'text-blue-600 border-blue-200 bg-blue-50' : 'text-gray-500 border-gray-200 bg-white hover:bg-gray-50'}`}>我单位 <span className="w-3 h-3 border border-current rounded-sm flex items-center justify-center text-[10px]">✎</span></span>
                   </div>
                 </div>
 
@@ -242,41 +285,25 @@ export default function CreateTechnicalBid() {
                     </div>
                   </div>
                   <div className="grid grid-cols-4 gap-3">
-                    <div className="border border-black/[0.06] bg-white rounded-xl p-3 relative cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
-                      <div className="text-[10px] text-gray-600 leading-tight space-y-1">
-                        <div><span className="font-bold">1</span> 标题1</div>
-                        <div><span className="font-bold">1.1</span> 标题2</div>
-                        <div><span className="font-bold">1.1.1</span> 标题3</div>
-                        <div><span className="font-bold">1.1.1.1</span> 标题4</div>
-                        <div><span className="font-bold">1.1.1.1.1</span> 标题5</div>
-                        <div><span className="font-bold">1.1.1.1.1.1</span> 标题6</div>
+                    {[0, 1, 2].map((idx) => (
+                      <div key={idx} onClick={() => setNumberingStyle(idx)} className={`border rounded-xl p-3 relative cursor-pointer transition-all ${numberingStyle === idx ? 'border-blue-500 bg-blue-50 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border-black/[0.06] bg-white hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                        {numberingStyle === idx ? (
+                          <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                        ) : (
+                          <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                        )}
+                        <div className="text-[10px] text-gray-600 leading-tight space-y-1">
+                          <div><span className="font-bold">1</span> 标题1</div>
+                          <div><span className="font-bold">1.1</span> 标题2</div>
+                          <div><span className="font-bold">1.1.1</span> 标题3</div>
+                          <div><span className="font-bold">1.1.1.1</span> 标题4</div>
+                          <div><span className="font-bold">1.1.1.1.1</span> 标题5</div>
+                          <div><span className="font-bold">1.1.1.1.1.1</span> 标题6</div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="border border-black/[0.06] bg-white rounded-xl p-3 relative cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
-                      <div className="text-[10px] text-gray-600 leading-tight space-y-1">
-                        <div><span className="font-bold">1</span> 标题1</div>
-                        <div><span className="font-bold">1.1</span> 标题2</div>
-                        <div><span className="font-bold">1.1.1</span> 标题3</div>
-                        <div><span className="font-bold">1.1.1.1</span> 标题4</div>
-                        <div><span className="font-bold">1.1.1.1.1</span> 标题5</div>
-                        <div><span className="font-bold">1.1.1.1.1.1</span> 标题6</div>
-                      </div>
-                    </div>
-                    <div className="border border-black/[0.06] bg-white rounded-xl p-3 relative cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full"></div>
-                      <div className="text-[10px] text-gray-600 leading-tight space-y-1">
-                        <div><span className="font-bold">1</span> 标题1</div>
-                        <div><span className="font-bold">1.1</span> 标题2</div>
-                        <div><span className="font-bold">1.1.1</span> 标题3</div>
-                        <div><span className="font-bold">1.1.1.1</span> 标题4</div>
-                        <div><span className="font-bold">1.1.1.1.1</span> 标题5</div>
-                        <div><span className="font-bold">1.1.1.1.1.1</span> 标题6</div>
-                      </div>
-                    </div>
-                    <div className="border border-dashed border-gray-300 bg-gray-50 rounded-xl p-3 flex items-center justify-center cursor-pointer hover:bg-gray-100">
-                      <span className="text-xs text-gray-500">自定义序号</span>
+                    ))}
+                    <div onClick={() => setNumberingStyle(3)} className={`border border-dashed rounded-xl p-3 flex items-center justify-center cursor-pointer transition-all ${numberingStyle === 3 ? 'border-blue-500 bg-blue-50 text-blue-600' : 'border-gray-300 bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>
+                      <span className="text-xs font-medium">自定义序号</span>
                     </div>
                   </div>
                 </div>
@@ -285,8 +312,12 @@ export default function CreateTechnicalBid() {
                 <div className="mb-8">
                   <h4 className="text-sm font-bold text-gray-800 mb-4">封面样式</h4>
                   <div className="grid grid-cols-4 gap-4">
-                    <div className="aspect-[1/1.4] border-2 border-blue-500 rounded-xl relative overflow-hidden cursor-pointer shadow-[0_4px_12px_rgba(79,107,255,0.08)]">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                    <div onClick={() => setCoverStyle(0)} className={`aspect-[1/1.4] rounded-xl relative overflow-hidden cursor-pointer transition-all ${coverStyle === 0 ? 'border-2 border-blue-500 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border border-black/[0.06] hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                      {coverStyle === 0 ? (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                      ) : (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                      )}
                       <div className="w-full h-full bg-white flex flex-col items-center justify-center p-2">
                          <div className="text-[8px] text-gray-400 mb-2">XX 项目</div>
                          <div className="text-sm font-bold text-gray-800 mb-4">投标文件</div>
@@ -294,8 +325,12 @@ export default function CreateTechnicalBid() {
                          <div className="w-full h-0.5 bg-blue-200"></div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-black/[0.06] rounded-xl relative overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                    <div onClick={() => setCoverStyle(1)} className={`aspect-[1/1.4] rounded-xl relative overflow-hidden cursor-pointer transition-all ${coverStyle === 1 ? 'border-2 border-blue-500 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border border-black/[0.06] hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                      {coverStyle === 1 ? (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                      ) : (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                      )}
                       <div className="w-full h-full bg-white flex flex-col items-center justify-center p-2 relative">
                          <div className="absolute top-0 left-0 w-full h-8 bg-blue-50"></div>
                          <div className="text-[8px] text-gray-400 mb-2 z-10">XX 项目</div>
@@ -303,8 +338,12 @@ export default function CreateTechnicalBid() {
                          <div className="absolute bottom-0 left-0 w-full h-6 bg-blue-100 rounded-t-full"></div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-black/[0.06] rounded-xl relative overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                    <div onClick={() => setCoverStyle(2)} className={`aspect-[1/1.4] rounded-xl relative overflow-hidden cursor-pointer transition-all ${coverStyle === 2 ? 'border-2 border-blue-500 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border border-black/[0.06] hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                      {coverStyle === 2 ? (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                      ) : (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                      )}
                       <div className="w-full h-full bg-white flex flex-col items-center p-2 relative">
                          <div className="text-[8px] text-gray-400 mt-2 mb-1">XX 项目</div>
                          <div className="text-sm font-bold text-gray-800 mb-2">投标文件</div>
@@ -316,8 +355,12 @@ export default function CreateTechnicalBid() {
                          <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-blue-600 to-blue-400"></div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-black/[0.06] rounded-xl relative overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                    <div onClick={() => setCoverStyle(3)} className={`aspect-[1/1.4] rounded-xl relative overflow-hidden cursor-pointer transition-all ${coverStyle === 3 ? 'border-2 border-blue-500 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border border-black/[0.06] hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                      {coverStyle === 3 ? (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                      ) : (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                      )}
                       <div className="w-full h-full bg-white flex flex-col items-center p-2 relative">
                          <div className="text-[8px] text-gray-400 mt-2 mb-1">XX 项目</div>
                          <div className="text-sm font-bold text-blue-500 mb-2">投标文件</div>
@@ -327,8 +370,12 @@ export default function CreateTechnicalBid() {
                          </div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-black/[0.06] rounded-xl relative overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                    <div onClick={() => setCoverStyle(4)} className={`aspect-[1/1.4] rounded-xl relative overflow-hidden cursor-pointer transition-all ${coverStyle === 4 ? 'border-2 border-blue-500 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border border-black/[0.06] hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                      {coverStyle === 4 ? (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                      ) : (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                      )}
                       <div className="w-full h-full bg-white flex flex-col items-center p-2 relative">
                          <div className="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
                          <div className="text-[8px] text-gray-400 mt-4 mb-1">XX 项目</div>
@@ -336,9 +383,13 @@ export default function CreateTechnicalBid() {
                          <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></div>
                       </div>
                     </div>
-                    <div className="aspect-[1/1.4] border border-black/[0.06] bg-gray-50 rounded-xl relative flex items-center justify-center cursor-pointer hover:bg-white hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)] transition-all">
-                      <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
-                      <span className="text-sm text-gray-500 font-medium">无封面</span>
+                    <div onClick={() => setCoverStyle(5)} className={`aspect-[1/1.4] bg-gray-50 rounded-xl relative flex items-center justify-center cursor-pointer transition-all ${coverStyle === 5 ? 'border-2 border-blue-500 bg-blue-50 text-blue-600 shadow-[0_4px_12px_rgba(79,107,255,0.08)]' : 'border border-black/[0.06] text-gray-500 hover:bg-white hover:border-blue-300 hover:shadow-[0_4px_12px_rgba(79,107,255,0.08)]'}`}>
+                      {coverStyle === 5 ? (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white border-2 border-white z-10">✓</div>
+                      ) : (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 border border-black/[0.08] bg-white rounded-full z-10"></div>
+                      )}
+                      <span className="text-sm font-medium">无封面</span>
                     </div>
                   </div>
                 </div>
