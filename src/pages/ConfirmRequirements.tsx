@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Home, RefreshCw, Diamond, Check, Edit3, ChevronUp, CheckCircle2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Home, RefreshCw, Diamond, Check, Edit3, ChevronUp, CheckCircle2, FileText } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 type FieldStatus = 'parsing' | 'streaming' | 'completed';
 type FieldType = 'text' | 'datetime' | 'markdown';
@@ -126,7 +126,7 @@ const InPlaceEditable = ({
           }
         }
       }}
-      className={`outline-none focus:outline-none break-words min-h-[24px] cursor-text ${
+      className={`outline-none focus:outline-none break-all whitespace-pre-wrap min-h-[24px] cursor-text w-full max-w-full overflow-hidden ${
         type === 'markdown' 
           ? '[&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-2 [&_li]:mb-0 [&_p]:mb-2 last:[&_p]:mb-0 [&_strong]:font-bold [&_strong]:text-gray-900 border border-transparent focus:border-blue-200 focus:bg-blue-50/30 rounded-md -mx-2 px-2 py-1 transition-colors' 
           : 'border border-transparent focus:border-blue-200 focus:bg-blue-50/30 rounded-md -mx-2 px-2 py-1 transition-colors'
@@ -136,7 +136,11 @@ const InPlaceEditable = ({
 };
 
 
-const INITIAL_FIELDS: Field[] = [
+const LIST_CONTENT = '- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。';
+
+const DRAW_CONTENT = '- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。';
+
+const getInitialFields = (isListUploaded: boolean, isDrawingsUploaded: boolean): Field[] => [
   {
     id: 'name',
     title: '项目名称',
@@ -187,7 +191,7 @@ const INITIAL_FIELDS: Field[] = [
     title: '项目清单',
     status: 'parsing',
     content: '',
-    fullContent: '- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。- **土石方工程：**包含土方开挖、土方回填、场地平整等，预计工程量为约 15,000 立方米。\n- **主体结构工程：**包含混凝土浇筑、钢筋绑扎、模板安拆等，总建筑面积约 3415.85 平米。\n- **装饰装修工程：**室内地面找平及铺贴、墙面刮腻子及乳胶漆、天花板吊顶等工艺。\n- **机电安装工程：**强弱电线缆敷设、给排水管道安装、消防系统及通风空调设备安装。',
+    fullContent: isListUploaded ? LIST_CONTENT : '',
     isExpanded: false,
     type: 'markdown'
   },
@@ -196,7 +200,7 @@ const INITIAL_FIELDS: Field[] = [
     title: '工程图纸',
     status: 'parsing',
     content: '',
-    fullContent: '- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。- **建筑专业图纸（建施）：**一层至屋顶层平面布置图、各向立面图、剖面图及节点详图。\n- **结构专业图纸（结施）：**基础图、梁板柱配筋图、钢结构节点图。\n- **给排水专业图纸（水施）：**给排水首层、标准层平面图及系统轴测图。\n- **电气专业图纸（电施）：**照明及动力平面图、弱电智能化系统布线图。',
+    fullContent: isDrawingsUploaded ? DRAW_CONTENT : '',
     isExpanded: false,
     type: 'markdown'
   }
@@ -212,15 +216,96 @@ const ParsingDots = ({ colorClass = 'bg-blue-500' }: { colorClass?: string }) =>
 
 export default function ConfirmRequirements() {
   const navigate = useNavigate();
-  const [fields, setFields] = useState<Field[]>(INITIAL_FIELDS);
+  const location = useLocation();
+  const projectType = location.state?.projectType || '工程类';
+  const uploadedFiles = location.state?.uploadedFiles || { tender: 'example' };
+  
+  const isListUploaded = projectType === '工程类' ? !!uploadedFiles.list : true;
+  const isDrawingsUploaded = projectType === '工程类' ? !!uploadedFiles.drawings : true;
+
+  const initialFields = React.useMemo(() => getInitialFields(isListUploaded, isDrawingsUploaded), [isListUploaded, isDrawingsUploaded]);
+
+  const [fields, setFields] = useState<Field[]>(initialFields);
   const [hoveredFieldId, setHoveredFieldId] = useState<string | null>(null);
+
+  const [initialParsingDone, setInitialParsingDone] = useState(false);
+
+  useEffect(() => {
+    if (!initialParsingDone) {
+      const isParsing = fields.some(f => f.status === 'parsing' || f.status === 'streaming');
+      if (!isParsing) {
+        setInitialParsingDone(true);
+      }
+    }
+  }, [fields, initialParsingDone]);
+
+  const [listIgnored, setListIgnored] = useState(false);
+  const [drawingsIgnored, setDrawingsIgnored] = useState(false);
+  
+  const [uploadedListFile, setUploadedListFile] = useState<{name: string, size: string} | null>(null);
+  const [uploadedDrawingsFile, setUploadedDrawingsFile] = useState<{name: string, size: string} | null>(null);
+  const [listFileStatus, setListFileStatus] = useState<'uploading' | 'parsing' | 'done'>('uploading');
+  const [drawingsFileStatus, setDrawingsFileStatus] = useState<'uploading' | 'parsing' | 'done'>('uploading');
+
+  const fileInputRefList = useRef<HTMLInputElement>(null);
+  const fileInputRefDrawings = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (type: 'list' | 'drawings', e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const fileInfo = { name: file.name, size: (file.size / 1024 / 1024).toFixed(2) + 'MB' };
+    const targetId = type === 'list' ? 'list' : 'draw';
+    const targetContent = type === 'list' ? LIST_CONTENT : DRAW_CONTENT;
+
+    if (type === 'list') {
+      setUploadedListFile(fileInfo);
+      setListFileStatus('parsing');
+    } else {
+      setUploadedDrawingsFile(fileInfo);
+      setDrawingsFileStatus('parsing');
+    }
+
+    // Reset input value so the same file can be uploaded again if needed
+    if (e.target) {
+        e.target.value = '';
+    }
+
+    setTimeout(() => {
+        const fieldEl = document.getElementById(`field-${targetId}`);
+        const containerEl = fieldEl?.closest('.overflow-y-auto');
+        if (fieldEl && containerEl) {
+           const topPos = fieldEl.getBoundingClientRect().top - containerEl.getBoundingClientRect().top + containerEl.scrollTop;
+           containerEl.scrollTo({ top: topPos, behavior: 'smooth' });
+        } else if (fieldEl) {
+           fieldEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 100);
+
+    setTimeout(() => {
+      setFields(prev => prev.map(f => f.id === targetId ? { ...f, status: 'streaming', fullContent: targetContent, isExpanded: true } : f));
+      let currentLength = 0;
+      const interval = setInterval(() => {
+        currentLength += Math.floor(Math.random() * 3) + 1;
+        if (currentLength >= targetContent.length) {
+            currentLength = targetContent.length;
+            clearInterval(interval);
+            setFields(prev => prev.map(f => f.id === targetId ? { ...f, status: 'completed', content: targetContent } : f));
+            if (type === 'list') setListFileStatus('done');
+            else setDrawingsFileStatus('done');
+        } else {
+            setFields(prev => prev.map(f => f.id === targetId ? { ...f, content: targetContent.slice(0, currentLength) } : f));
+        }
+      }, 15);
+    }, 500);
+  };
 
   useEffect(() => {
     let unmounted = false;
     const timers: NodeJS.Timeout[] = [];
     const intervals: NodeJS.Timeout[] = [];
 
-    INITIAL_FIELDS.forEach((field) => {
+    initialFields.forEach((field) => {
       const startDelay = 500 + Math.random() * 2000;
       
       const timer = setTimeout(() => {
@@ -266,10 +351,18 @@ export default function ConfirmRequirements() {
     setFields(prev => prev.map(f => f.id === id ? { ...f, content: newContent, fullContent: newContent } : f));
   };
 
-  const isOverallParsing = fields.some(f => f.status === 'parsing' || f.status === 'streaming');
-  const totalLength = fields.reduce((acc, f) => acc + f.fullContent.length, 0);
-  const currentLength = fields.reduce((acc, f) => acc + f.content.length, 0);
-  const progressPercent = Math.min(100, Math.floor((currentLength / totalLength) * 100));
+  const isOverallParsing = !initialParsingDone;
+  
+  const initialParsingFields = fields.filter(f => f.id !== 'list' && f.id !== 'draw' || initialParsingDone === false);
+  const totalLength = initialParsingFields.reduce((acc, f) => acc + f.fullContent.length, 0);
+  const currentLength = initialParsingFields.reduce((acc, f) => acc + f.content.length, 0);
+  const progressPercent = Math.min(100, Math.floor((currentLength / (totalLength || 1)) * 100));
+
+  const dirField = fields.find(f => f.id === 'dir');
+  const scoreField = fields.find(f => f.id === 'score');
+  const hasDirValue = dirField && (dirField.fullContent.trim() !== '' || dirField.content.trim() !== '');
+  const hasScoreValue = scoreField && (scoreField.fullContent.trim() !== '' || scoreField.content.trim() !== '');
+  const showDirMode = hasDirValue && hasScoreValue;
 
   return (
     <div className="h-screen bg-[#F5F7FA] font-sans flex flex-col overflow-hidden">
@@ -364,15 +457,18 @@ export default function ConfirmRequirements() {
           </div>
         </div>
 
-        {/* Right Column: 项目信息 */}
-        <div className="flex-[3] bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden relative">
-          <div className="h-[57px] px-6 flex items-center flex-shrink-0 border-b border-gray-100">
-            <div className="flex items-center gap-2 mr-4 shrink-0 w-24">
-              <div className="w-1 h-4 bg-gradient-to-b from-orange-400 to-blue-500 rounded-full"></div>
-              <h2 className="text-base font-bold text-gray-800">项目信息</h2>
-            </div>
-            
-            {isOverallParsing ? (
+        {/* Right Column Container */}
+        <div className="flex-[3] flex flex-col gap-4 min-h-0">
+          
+          {/* 项目信息 */}
+          <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden relative">
+            <div className="h-[57px] px-6 flex items-center flex-shrink-0 border-b border-gray-100">
+              <div className="flex items-center gap-2 mr-4 shrink-0 w-24">
+                <div className="w-1 h-4 bg-gradient-to-b from-orange-400 to-blue-500 rounded-full"></div>
+                <h2 className="text-base font-bold text-gray-800">项目信息</h2>
+              </div>
+              
+              {isOverallParsing ? (
               <div className="flex-1 flex items-center justify-between bg-[#F7F7FD] rounded-lg px-4 py-2">
                 <div className="flex items-center gap-2">
                    <ParsingDots colorClass="bg-[#5B55EA]" />
@@ -405,8 +501,9 @@ export default function ConfirmRequirements() {
             <div className="flex flex-col">
               {fields.map((field) => {
                 const isParsing = field.status === 'parsing';
+                const isParsingOrStreaming = field.status === 'parsing' || field.status === 'streaming';
                 return (
-                  <div key={field.id} className="border-b border-dashed border-gray-200 last:border-b-0 group">
+                  <div key={field.id} id={`field-${field.id}`} className="border-b border-dashed border-gray-200 last:border-b-0 group">
                     <div 
                       className={`flex items-center justify-between sticky top-0 bg-white z-10 pt-5 pb-4 -mx-6 px-6 ${!isParsing ? 'cursor-pointer select-none' : ''}`}
                       onClick={() => toggleExpand(field.id)}
@@ -417,7 +514,7 @@ export default function ConfirmRequirements() {
                            <span className="text-[12px] text-gray-400 leading-none animate-in fade-in">点击可修改内容</span>
                         )}
                       </div>
-                      {isParsing ? (
+                      {isParsingOrStreaming ? (
                         <div className="flex items-center gap-2 text-blue-500 text-xs font-medium">
                           <ParsingDots />
                           <span>解析中...</span>
@@ -433,14 +530,20 @@ export default function ConfirmRequirements() {
                         onMouseEnter={() => setHoveredFieldId(field.id)}
                         onMouseLeave={() => setHoveredFieldId(null)}
                       >
-                         <InPlaceEditable
-                           type={field.type}
-                           value={field.content}
-                           onChange={(val) => updateFieldContent(field.id, val)}
-                           onFocus={() => setEditingState(field.id, true)}
-                           onBlur={() => setEditingState(field.id, false)}
-                           maxLength={field.type === 'text' ? 100 : undefined}
-                         />
+                         {field.fullContent === '' && !field.isEditing && field.content === '' ? (
+                           <div className="text-gray-400 text-[14px] cursor-text -mx-2 px-2 py-1" onClick={() => setEditingState(field.id, true)}>
+                             未上传{field.id === 'list' ? '项目清单' : '工程图纸'}，您可手动输入或在“其它补充信息”中补充上传
+                           </div>
+                         ) : (
+                           <InPlaceEditable
+                             type={field.type}
+                             value={field.content}
+                             onChange={(val) => updateFieldContent(field.id, val)}
+                             onFocus={() => setEditingState(field.id, true)}
+                             onBlur={() => setEditingState(field.id, false)}
+                             maxLength={field.type === 'text' ? 100 : undefined}
+                           />
+                         )}
                       </div>
                     )}
                   </div>
@@ -448,6 +551,114 @@ export default function ConfirmRequirements() {
               })}
             </div>
           </div>
+          </div>
+          
+          {/* 其他补充信息 */}
+          {initialParsingDone && (
+            <div className="shrink-0 bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col p-6 gap-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-1 h-4 bg-gradient-to-b from-orange-400 to-blue-500 rounded-full"></div>
+                <h2 className="text-base font-bold text-gray-800">其他补充信息</h2>
+              </div>
+            
+              {/* Select Directory Generation Mode */}
+              {showDirMode && (
+                <div className="bg-blue-50/50 border border-blue-200 rounded-lg p-5 flex flex-col gap-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-800 font-medium">
+                    <div className="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[11px] font-bold shrink-0 shadow-sm leading-none">i</div>
+                    <span>请选择目录生成方式</span>
+                    <span className="text-gray-400 font-normal ml-2">检测到招标文件同时提供投标文件组成目录/技术评分标准，请选择目录生成方式</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-6 mt-1 ml-6">
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <div className="relative flex items-center justify-center">
+                        <input type="radio" name="dirMode" defaultChecked className="peer sr-only" />
+                        <div className="w-4 h-4 rounded-full border border-gray-300 peer-checked:border-blue-500 peer-checked:border-[4px] transition-all bg-white shadow-sm group-hover:border-blue-400"></div>
+                      </div>
+                      <span className="text-[13px] text-gray-700 font-medium group-hover:text-blue-600 transition-colors">融合投标文件组成目录/评分标准</span>
+                      <span className="bg-green-100 text-green-600 text-[10px] px-2 py-0.5 rounded ml-1 font-medium">推荐</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <div className="relative flex items-center justify-center">
+                        <input type="radio" name="dirMode" className="peer sr-only" />
+                        <div className="w-4 h-4 rounded-full border border-gray-300 peer-checked:border-blue-500 peer-checked:border-[4px] transition-all bg-white shadow-sm group-hover:border-gray-400"></div>
+                      </div>
+                      <span className="text-[13px] text-gray-700 font-medium group-hover:text-gray-900 transition-colors">仅按评分标准生成</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <div className="relative flex items-center justify-center">
+                        <input type="radio" name="dirMode" className="peer sr-only" />
+                        <div className="w-4 h-4 rounded-full border border-gray-300 peer-checked:border-blue-500 peer-checked:border-[4px] transition-all bg-white shadow-sm group-hover:border-gray-400"></div>
+                      </div>
+                      <span className="text-[13px] text-gray-700 font-medium group-hover:text-gray-900 transition-colors">仅按投标文件组成目录生成</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+            
+              {/* List Alert / Uploading Status */}
+              {!isListUploaded && !listIgnored && !uploadedListFile && (
+                <div className="bg-orange-50/50 border border-orange-200 rounded-lg px-4 py-3 flex items-center justify-between shadow-sm">
+                  <div className="flex items-center gap-2 text-[13px]">
+                    <div className="w-4 h-4 rounded-full bg-orange-400 text-white flex items-center justify-center text-[10px] font-bold shrink-0">!</div>
+                    <span className="text-gray-800 font-medium">当前未上传清单文件，建议补充上传</span>
+                    <span className="text-gray-400 ml-2">若无清单，可忽略此项</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => setListIgnored(true)} className="text-gray-500 bg-gray-100/80 hover:bg-gray-200 px-4 py-1.5 rounded-[6px] text-[13px] font-medium transition-colors">忽略</button>
+                    <button onClick={() => fileInputRefList.current?.click()} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-[6px] text-[13px] font-medium shadow-sm transition-colors cursor-pointer">上传清单</button>
+                    <input type="file" ref={fileInputRefList} className="hidden" onChange={(e) => handleFileUpload('list', e)} accept=".pdf,.doc,.docx,.xls,.xlsx" />
+                  </div>
+                </div>
+              )}
+              {uploadedListFile && (
+                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-4 py-3 flex items-center shadow-sm">
+                  <div className="flex items-center gap-3">
+                    {listFileStatus === 'parsing' ? <ParsingDots colorClass="bg-blue-500" /> : <CheckCircle2 className="text-green-500" size={16} />}
+                    <span className="text-sm font-medium text-gray-800">
+                       {listFileStatus === 'parsing' ? '清单文件解析中' : listFileStatus === 'done' ? '清单文件解析完成' : '清单文件处理中'}
+                    </span>
+                    <span className="flex items-center gap-1.5 text-sm ml-2">
+                      <FileText className="text-red-500" size={16} />
+                      <span className="text-gray-700">{uploadedListFile.name}</span>
+                      <span className="text-gray-500">({uploadedListFile.size})</span>
+                    </span>
+                  </div>
+                </div>
+              )}
+            
+              {/* Draw Alert / Uploading Status */}
+              {projectType === '工程类' && !isDrawingsUploaded && !drawingsIgnored && !uploadedDrawingsFile && (
+                <div className="bg-orange-50/50 border border-orange-200 rounded-lg px-4 py-3 flex items-center justify-between shadow-sm">
+                  <div className="flex items-center gap-2 text-[13px]">
+                    <div className="w-4 h-4 rounded-full bg-orange-400 text-white flex items-center justify-center text-[10px] font-bold shrink-0">!</div>
+                    <span className="text-gray-800 font-medium">当前未上传图纸文件，建议补充上传</span>
+                    <span className="text-gray-400 ml-2">若无图纸，可忽略此项</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => setDrawingsIgnored(true)} className="text-gray-500 bg-gray-100/80 hover:bg-gray-200 px-4 py-1.5 rounded-[6px] text-[13px] font-medium transition-colors">忽略</button>
+                    <button onClick={() => fileInputRefDrawings.current?.click()} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-[6px] text-[13px] font-medium shadow-sm transition-colors cursor-pointer">上传图纸</button>
+                    <input type="file" ref={fileInputRefDrawings} className="hidden" onChange={(e) => handleFileUpload('drawings', e)} accept=".pdf,.doc,.docx" />
+                  </div>
+                </div>
+              )}
+              {uploadedDrawingsFile && (
+                <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-4 py-3 flex items-center shadow-sm">
+                  <div className="flex items-center gap-3">
+                    {drawingsFileStatus === 'parsing' ? <ParsingDots colorClass="bg-blue-500" /> : <CheckCircle2 className="text-green-500" size={16} />}
+                    <span className="text-sm font-medium text-gray-800">
+                       {drawingsFileStatus === 'parsing' ? '图纸文件解析中' : drawingsFileStatus === 'done' ? '图纸文件解析完成' : '图纸文件处理中'}
+                    </span>
+                    <span className="flex items-center gap-1.5 text-sm ml-2">
+                      <FileText className="text-red-500" size={16} />
+                      <span className="text-gray-700">{uploadedDrawingsFile.name}</span>
+                      <span className="text-gray-500">({uploadedDrawingsFile.size})</span>
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
 

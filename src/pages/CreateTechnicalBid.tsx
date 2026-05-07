@@ -90,6 +90,37 @@ const FontSettingRow = ({ title, hasCollapse = false }: { title: string, hasColl
   );
 };
 
+const getCardStyle = (fileType: string) => {
+  if (fileType === 'list' || fileType === 'drawings') {
+    return {
+      bgUploaded: 'bg-gradient-to-br from-[#e6fbf1]/80 to-[#cbf4df]/40',
+      bg: 'bg-[#e6fbf1]/40',
+      hoverBg: 'hover:bg-[#e6fbf1]/60',
+      borderUploaded: 'border-[#a7f3d0]',
+      borderUnuploaded: 'border-[#a7f3d0]/50',
+      shadowHover: 'hover:shadow-[0_4px_20px_-4px_rgba(16,185,129,0.12)]',
+      badgeBg: 'bg-[#10b981]',
+      btnGradient: 'from-[#10b981] to-[#059669]',
+      btnHoverGradient: 'hover:from-[#059669] hover:to-[#047857]',
+      iconBg: 'bg-[#10b981]',
+      shadowIcon: 'shadow-emerald-500/20',
+    };
+  }
+  return {
+    bgUploaded: 'bg-gradient-to-br from-blue-50 to-blue-100/50',
+    bg: 'bg-blue-50/40',
+    hoverBg: 'hover:bg-blue-50/60',
+    borderUploaded: 'border-blue-200',
+    borderUnuploaded: 'border-blue-100/60',
+    shadowHover: 'hover:shadow-[0_4px_20px_-4px_rgba(59,130,246,0.12)]',
+    badgeBg: 'bg-blue-500',
+    btnGradient: 'from-blue-500 to-blue-600',
+    btnHoverGradient: 'hover:from-blue-600 hover:to-blue-700',
+    iconBg: 'bg-blue-500',
+    shadowIcon: 'shadow-blue-500/20',
+  };
+};
+
 const UploadCard = ({
   title,
   badgeText,
@@ -111,21 +142,92 @@ const UploadCard = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const inputId = `upload-${fileType}`;
+  const colors = getCardStyle(fileType);
+
+  if (fileName) {
+    return (
+      <div className="flex flex-col">
+        <h3 className="text-sm font-bold text-gray-800 mb-3">{title}</h3>
+        <div className={`${colors.bgUploaded} border ${colors.borderUploaded} rounded-[16px] w-[320px] h-[192px] relative transition-all ${colors.hoverBg} ${colors.shadowHover}`}>
+          {/* Top Left Folder Badge */}
+          <div className={`absolute top-0 left-0 w-[84px] h-[72px] ${colors.badgeBg} rounded-tl-[16px] rounded-br-[24px] rounded-tr-[12px] flex flex-col items-center justify-center text-white shadow-sm z-10`}>
+            <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-90 mt-1">
+              <path d="M2.5 3.5C2.5 2.39543 3.39543 1.5 4.5 1.5H8.31057C8.87979 1.5 9.42138 1.74239 9.8015 2.16631L11 3.5H19.5C20.6046 3.5 21.5 4.39543 21.5 5.5V16.5C21.5 17.6046 20.6046 18.5 19.5 18.5H4.5C3.39543 18.5 2.5 17.6046 2.5 16.5V3.5Z" fill="white" fillOpacity="0.6"/>
+              <path d="M1.5 8.5C1.5 7.39543 2.39543 6.5 3.5 6.5H20.5C21.6046 6.5 22.5 7.39543 22.5 8.5V16.5C22.5 17.6046 21.6046 18.5 20.5 18.5H3.5C2.39543 18.5 1.5 17.6046 1.5 16.5V8.5Z" fill="white"/>
+            </svg>
+            <span className="text-[12px] font-bold tracking-wide mt-1">
+              {fileType === 'tender' ? '招标文件' : fileType === 'list' ? '清单文件' : '图纸文件'}
+            </span>
+          </div>
+
+          {badgeText && (
+            <div className="absolute top-0 right-0 z-20">
+              <div 
+                className={`bg-blue-500 text-white text-xs px-3 py-1.5 rounded-bl-xl rounded-tr-[15px] flex items-center gap-1 backdrop-blur-sm ${badgeOptions ? 'cursor-pointer hover:bg-blue-600' : ''}`}
+                onClick={() => badgeOptions && setIsDropdownOpen(!isDropdownOpen)}
+              >
+                {badgeText} {badgeOptions && <ChevronDown size={12} />}
+              </div>
+              {isDropdownOpen && badgeOptions && (
+                <div className="absolute top-full right-0 mt-1 bg-white border border-gray-100 rounded-lg shadow-lg overflow-hidden min-w-[80px] z-30">
+                  {badgeOptions.map(opt => (
+                    <div 
+                      key={opt}
+                      className="px-4 py-2 text-xs text-gray-700 hover:bg-blue-50 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onBadgeSelect?.(opt);
+                        setIsDropdownOpen(false);
+                      }}
+                    >
+                      {opt}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="absolute top-[80px] bottom-6 left-6 right-6 flex flex-col justify-end">
+            <h4 className="text-[15px] font-bold text-gray-800 truncate block leading-tight mb-2" title={fileName}>
+              {fileName}
+            </h4>
+            <p className="text-[13px] text-gray-500 font-medium mb-1">文件来源：手动导入</p>
+            
+            <div className="mt-1">
+              <label 
+                htmlFor={inputId}
+                className="text-[14px] text-blue-600 font-medium tracking-wide cursor-pointer hover:text-blue-700 transition-colors inline-block focus:outline-none"
+              >
+                重新导入
+              </label>
+            </div>
+          </div>
+          <input 
+            type="file" 
+            id={inputId} 
+            className="hidden" 
+            onChange={onFileSelect} 
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
+    <div className="flex flex-col">
       <h3 className="text-sm font-bold text-gray-800 mb-3">{title}</h3>
-      <div className="bg-blue-50/40 border border-blue-100/60 rounded-2xl p-6 w-[320px] relative overflow-visible transition-all hover:bg-blue-50/60 hover:shadow-[0_4px_20px_-4px_rgba(79,107,255,0.08)]">
+      <div className={`${colors.bg} border ${colors.borderUnuploaded} rounded-[16px] p-6 w-[320px] h-[192px] flex flex-col relative transition-all ${colors.hoverBg} ${colors.shadowHover}`}>
         {badgeText && (
           <div className="absolute top-0 right-0 z-20">
             <div 
-              className={`bg-blue-500/90 text-white text-xs px-3 py-1 rounded-bl-xl rounded-tr-2xl flex items-center gap-1 backdrop-blur-sm ${badgeOptions ? 'cursor-pointer hover:bg-blue-600' : ''}`}
+              className={`bg-blue-500 text-white text-xs px-3 py-1.5 rounded-bl-[12px] rounded-tr-[15px] flex items-center gap-1 backdrop-blur-sm ${badgeOptions ? 'cursor-pointer hover:bg-blue-600' : ''}`}
               onClick={() => badgeOptions && setIsDropdownOpen(!isDropdownOpen)}
             >
               {badgeText} {badgeOptions && <ChevronDown size={12} />}
             </div>
             {isDropdownOpen && badgeOptions && (
-              <div className="absolute top-full right-0 mt-1 bg-white border border-gray-100 rounded-lg shadow-lg overflow-hidden min-w-[80px]">
+              <div className="absolute top-full right-0 mt-1 bg-white border border-gray-100 rounded-lg shadow-lg overflow-hidden min-w-[80px] z-30">
                 {badgeOptions.map(opt => (
                   <div 
                     key={opt}
@@ -144,17 +246,23 @@ const UploadCard = ({
           </div>
         )}
 
-        <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md shadow-blue-500/20">
+        <div className={`w-12 h-12 ${colors.iconBg} rounded-xl flex items-center justify-center text-white mb-3 shadow-md ${colors.shadowIcon} shrink-0`}>
           <FileText size={24} />
         </div>
         
-        {fileName ? (
-          <div className="mb-4 bg-white/60 p-2 border border-blue-200 rounded text-sm text-gray-800 truncate shadow-sm transition-colors" title={fileName}>
-            {fileName}
+        <div className="flex flex-col flex-1 min-h-0">
+          <p className="text-[13px] text-gray-500 mb-2 leading-relaxed flex-1 overflow-hidden">{description}</p>
+          
+          <div className="mt-auto">
+            <label 
+              htmlFor={inputId}
+              className={`w-full bg-gradient-to-r ${colors.btnGradient} text-white py-2 rounded-lg flex items-center justify-center gap-2 text-[14px] font-medium ${colors.btnHoverGradient} transition-colors shadow-sm cursor-pointer hover:shadow-md`}
+            >
+              <UploadCloud size={16} />
+              导入文件
+            </label>
           </div>
-        ) : (
-          <p className="text-sm text-gray-600 mb-4 px-1">{description}</p>
-        )}
+        </div>
         
         <input 
           type="file" 
@@ -162,13 +270,6 @@ const UploadCard = ({
           className="hidden" 
           onChange={onFileSelect} 
         />
-        <label 
-          htmlFor={inputId}
-          className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg flex items-center justify-center gap-2 text-sm hover:from-blue-600 hover:to-blue-700 transition-colors shadow-sm cursor-pointer"
-        >
-          <UploadCloud size={16} />
-          {fileName ? '重新导入' : '导入文件'}
-        </label>
       </div>
     </div>
   );
@@ -686,7 +787,7 @@ export default function CreateTechnicalBid() {
       {/* Footer Actions */}
       <footer className="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-black/[0.04] py-3 px-6 flex justify-center z-50 shadow-[0_-8px_30px_rgba(0,0,0,0.03)]">
         <button 
-          onClick={() => navigate('/confirm-requirements')}
+          onClick={() => navigate('/confirm-requirements', { state: { projectType, uploadedFiles } })}
           className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-2 rounded-lg font-medium transition-colors"
         >
           下一步
