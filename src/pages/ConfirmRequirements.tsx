@@ -130,7 +130,14 @@ const InPlaceEditable = ({
       }}
       onBlur={(e) => {
         setIsFocused(false);
-        const newValue = type === 'markdown' ? e.currentTarget.innerHTML : e.currentTarget.innerText;
+        let newValue = type === 'markdown' ? e.currentTarget.innerHTML : e.currentTarget.innerText;
+        
+        // Normalize empty content
+        if (e.currentTarget.innerText.trim() === '' || newValue === '<br>' || newValue === '<p><br></p>') {
+          newValue = '';
+          e.currentTarget.innerHTML = '';
+        }
+
         if (maxLength && newValue.length > maxLength) {
            onChange(newValue.substring(0, maxLength));
         } else {
@@ -396,6 +403,7 @@ export default function ConfirmRequirements() {
   const hasDirValue = dirField && (dirField.fullContent.trim() !== '' || dirField.content.trim() !== '');
   const hasScoreValue = scoreField && (scoreField.fullContent.trim() !== '' || scoreField.content.trim() !== '');
   const showDirMode = hasDirValue && hasScoreValue;
+  const hasOtherInfo = showDirMode || (!isListUploaded && !listIgnored && !uploadedListFile) || !!uploadedListFile || (projectType === '工程类' && !isDrawingsUploaded && !drawingsIgnored && !uploadedDrawingsFile) || !!uploadedDrawingsFile;
 
   return (
     <div className="h-screen bg-[#F5F7FA] font-sans flex flex-col overflow-hidden">
@@ -583,7 +591,7 @@ export default function ConfirmRequirements() {
           </div>
           
           {/* 其他补充信息 */}
-          {initialParsingDone && (
+          {initialParsingDone && hasOtherInfo && (
             <div className="shrink-0 bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col p-6 gap-4">
               <div 
                 className="flex items-center justify-between mb-2 cursor-pointer group"
