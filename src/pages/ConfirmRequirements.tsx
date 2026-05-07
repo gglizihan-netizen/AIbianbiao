@@ -56,6 +56,8 @@ const InPlaceEditable = ({
   onFocus,
   onBlur,
   maxLength,
+  autoFocus,
+  emptyPlaceholder,
 }: {
   type: string;
   value: string;
@@ -63,6 +65,8 @@ const InPlaceEditable = ({
   onFocus: () => void;
   onBlur: () => void;
   maxLength?: number;
+  autoFocus?: boolean;
+  emptyPlaceholder?: string;
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -76,6 +80,23 @@ const InPlaceEditable = ({
        }
     }
   }, [value, type, isFocused]);
+
+  useEffect(() => {
+    if (autoFocus && contentRef.current) {
+      setTimeout(() => {
+        contentRef.current?.focus();
+        // Move cursor to end
+        const range = document.createRange();
+        const sel = window.getSelection();
+        if (sel) {
+          range.selectNodeContents(contentRef.current);
+          range.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+      }, 0);
+    }
+  }, [autoFocus]);
 
   if (type === 'datetime') {
     return (
@@ -102,6 +123,7 @@ const InPlaceEditable = ({
       ref={contentRef}
       contentEditable={true}
       suppressContentEditableWarning={true}
+      data-placeholder={emptyPlaceholder}
       onFocus={(e) => {
          setIsFocused(true);
          onFocus();
@@ -126,10 +148,13 @@ const InPlaceEditable = ({
           }
         }
       }}
-      className={`outline-none focus:outline-none break-all whitespace-pre-wrap min-h-[24px] cursor-text w-full max-w-full overflow-hidden ${
+      className={`outline-none focus:outline-none break-all whitespace-pre-wrap min-h-[24px] cursor-text w-full max-w-full overflow-hidden 
+        ${
+          !value && !isFocused && emptyPlaceholder ? "before:content-[attr(data-placeholder)] before:text-gray-400 before:cursor-text" : ""
+        } ${
         type === 'markdown' 
-          ? '[&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-2 [&_li]:mb-0 [&_p]:mb-2 last:[&_p]:mb-0 [&_strong]:font-bold [&_strong]:text-gray-900 [&_p]:break-words [&_p]:break-all [&_p]:whitespace-pre-wrap [&_li]:break-words [&_li]:break-all [&_li]:whitespace-pre-wrap border border-transparent focus:border-blue-200 focus:bg-blue-50/30 rounded-md -mx-2 px-2 py-1 transition-colors' 
-          : 'border border-transparent focus:border-blue-200 focus:bg-blue-50/30 rounded-md -mx-2 px-2 py-1 transition-colors'
+          ? '[&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-2 [&_li]:mb-0 [&_p]:mb-2 last:[&_p]:mb-0 [&_strong]:font-bold [&_strong]:text-gray-900 [&_p]:break-words [&_p]:break-all [&_p]:whitespace-pre-wrap [&_li]:break-words [&_li]:break-all [&_li]:whitespace-pre-wrap border border-transparent focus:border-blue-200 focus:bg-blue-50/30 rounded-md -mx-2 px-2 py-1 transition-colors relative' 
+          : 'border border-transparent focus:border-blue-200 focus:bg-blue-50/30 rounded-md -mx-2 px-2 py-1 transition-colors relative'
       }`}
     />
   );
@@ -538,20 +563,16 @@ export default function ConfirmRequirements() {
                         onMouseEnter={() => setHoveredFieldId(field.id)}
                         onMouseLeave={() => setHoveredFieldId(null)}
                       >
-                         {field.fullContent === '' && !field.isEditing && field.content === '' ? (
-                           <div className="text-gray-400 text-[14px] cursor-text -mx-2 px-2 py-1" onClick={() => setEditingState(field.id, true)}>
-                             未上传{field.id === 'list' ? '项目清单' : '工程图纸'}，您可手动输入或在“其它补充信息”中补充上传
-                           </div>
-                         ) : (
-                           <InPlaceEditable
-                             type={field.type}
-                             value={field.content}
-                             onChange={(val) => updateFieldContent(field.id, val)}
-                             onFocus={() => setEditingState(field.id, true)}
-                             onBlur={() => setEditingState(field.id, false)}
-                             maxLength={field.type === 'text' ? 100 : undefined}
-                           />
-                         )}
+                         <InPlaceEditable
+                           type={field.type}
+                           value={field.content}
+                           onChange={(val) => updateFieldContent(field.id, val)}
+                           onFocus={() => setEditingState(field.id, true)}
+                           onBlur={() => setEditingState(field.id, false)}
+                           maxLength={field.type === 'text' ? 100 : undefined}
+                           autoFocus={field.isEditing}
+                           emptyPlaceholder={field.id === 'list' || field.id === 'draw' ? `未上传${field.id === 'list' ? '项目清单' : '工程图纸'}，您可手动输入或在“其它补充信息”中补充上传` : `未提取到${field.title}，您可手动输入`}
+                         />
                       </div>
                     )}
                   </div>
