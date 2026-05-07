@@ -90,6 +90,90 @@ const FontSettingRow = ({ title, hasCollapse = false }: { title: string, hasColl
   );
 };
 
+const UploadCard = ({
+  title,
+  badgeText,
+  badgeOptions,
+  onBadgeSelect,
+  description,
+  fileType,
+  fileName,
+  onFileSelect,
+}: {
+  title: string;
+  badgeText?: string;
+  badgeOptions?: string[];
+  onBadgeSelect?: (val: string) => void;
+  description: string;
+  fileType: 'tender' | 'list' | 'drawings';
+  fileName?: string;
+  onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const inputId = `upload-${fileType}`;
+
+  return (
+    <div>
+      <h3 className="text-sm font-bold text-gray-800 mb-3">{title}</h3>
+      <div className="bg-blue-50/40 border border-blue-100/60 rounded-2xl p-6 w-[320px] relative overflow-visible transition-all hover:bg-blue-50/60 hover:shadow-[0_4px_20px_-4px_rgba(79,107,255,0.08)]">
+        {badgeText && (
+          <div className="absolute top-0 right-0 z-20">
+            <div 
+              className={`bg-blue-500/90 text-white text-xs px-3 py-1 rounded-bl-xl rounded-tr-2xl flex items-center gap-1 backdrop-blur-sm ${badgeOptions ? 'cursor-pointer hover:bg-blue-600' : ''}`}
+              onClick={() => badgeOptions && setIsDropdownOpen(!isDropdownOpen)}
+            >
+              {badgeText} {badgeOptions && <ChevronDown size={12} />}
+            </div>
+            {isDropdownOpen && badgeOptions && (
+              <div className="absolute top-full right-0 mt-1 bg-white border border-gray-100 rounded-lg shadow-lg overflow-hidden min-w-[80px]">
+                {badgeOptions.map(opt => (
+                  <div 
+                    key={opt}
+                    className="px-4 py-2 text-xs text-gray-700 hover:bg-blue-50 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onBadgeSelect?.(opt);
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    {opt}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md shadow-blue-500/20">
+          <FileText size={24} />
+        </div>
+        
+        {fileName ? (
+          <div className="mb-4 bg-white/60 p-2 border border-blue-200 rounded text-sm text-gray-800 truncate shadow-sm transition-colors" title={fileName}>
+            {fileName}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-600 mb-4 px-1">{description}</p>
+        )}
+        
+        <input 
+          type="file" 
+          id={inputId} 
+          className="hidden" 
+          onChange={onFileSelect} 
+        />
+        <label 
+          htmlFor={inputId}
+          className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg flex items-center justify-center gap-2 text-sm hover:from-blue-600 hover:to-blue-700 transition-colors shadow-sm cursor-pointer"
+        >
+          <UploadCloud size={16} />
+          {fileName ? '重新导入' : '导入文件'}
+        </label>
+      </div>
+    </div>
+  );
+};
+
 export default function CreateTechnicalBid() {
   const navigate = useNavigate();
   const [isStyleExpanded, setIsStyleExpanded] = useState(false);
@@ -100,6 +184,17 @@ export default function CreateTechnicalBid() {
   const [subject, setSubject] = useState('none');
   const [numberingStyle, setNumberingStyle] = useState(0);
   const [coverStyle, setCoverStyle] = useState(0);
+  
+  const [projectType, setProjectType] = useState<'工程类' | '货物类' | '服务类'>('工程类');
+  const [uploadedFiles, setUploadedFiles] = useState<{ tender?: string, list?: string, drawings?: string }>({});
+
+  const handleFileUpload = (type: 'tender' | 'list' | 'drawings') => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedFiles(prev => ({ ...prev, [type]: file.name }));
+    }
+    e.target.value = '';
+  };
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] font-sans flex flex-col">
@@ -161,19 +256,39 @@ export default function CreateTechnicalBid() {
       <main className="flex-1 px-6 pb-24 w-full">
         {/* Top Section: Upload */}
         <div className="mb-8">
-          <h3 className="text-sm font-bold text-gray-800 mb-3">导入招标文件</h3>
-          <div className="bg-blue-50/40 border border-blue-100/60 rounded-2xl p-6 w-[320px] relative overflow-hidden transition-all hover:bg-blue-50/60 hover:shadow-[0_4px_20px_-4px_rgba(79,107,255,0.08)]">
-            <div className="absolute top-0 right-0 bg-blue-500/90 text-white text-xs px-3 py-1 rounded-bl-xl flex items-center gap-1 backdrop-blur-sm">
-              工程类 <ChevronDown size={12} />
-            </div>
-            <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md shadow-blue-500/20">
-              <FileText size={24} />
-            </div>
-            <p className="text-sm text-gray-600 mb-4">支持docx、PDF、ZF格式的招标文件</p>
-            <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg flex items-center justify-center gap-2 text-sm hover:from-blue-600 hover:to-blue-700 transition-colors shadow-md shadow-blue-500/20">
-              <UploadCloud size={16} />
-              导入文件
-            </button>
+          <div className="flex flex-wrap gap-6">
+            <UploadCard
+              title="导入招标文件"
+              badgeText={projectType}
+              badgeOptions={['工程类', '货物类', '服务类']}
+              onBadgeSelect={(val) => setProjectType(val as any)}
+              description="支持docx、PDF、ZF格式的招标文件"
+              fileType="tender"
+              fileName={uploadedFiles.tender}
+              onFileSelect={handleFileUpload('tender')}
+            />
+
+            {uploadedFiles.tender && (
+               <>
+                 <UploadCard
+                   title="导入清单"
+                   description="支持xls、xlsx格式的清单文件"
+                   fileType="list"
+                   fileName={uploadedFiles.list}
+                   onFileSelect={handleFileUpload('list')}
+                 />
+
+                 {projectType === '工程类' && (
+                   <UploadCard
+                     title="导入图纸"
+                     description="支持dwg、pdf格式的施工图纸"
+                     fileType="drawings"
+                     fileName={uploadedFiles.drawings}
+                     onFileSelect={handleFileUpload('drawings')}
+                   />
+                 )}
+               </>
+            )}
           </div>
         </div>
 
