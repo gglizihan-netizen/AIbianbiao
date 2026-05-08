@@ -83,18 +83,20 @@ const InPlaceEditable = ({
 
   useEffect(() => {
     if (autoFocus && contentRef.current) {
-      setTimeout(() => {
-        contentRef.current?.focus();
-        // Move cursor to end
-        const range = document.createRange();
-        const sel = window.getSelection();
-        if (sel) {
-          range.selectNodeContents(contentRef.current);
-          range.collapse(false);
-          sel.removeAllRanges();
-          sel.addRange(range);
-        }
-      }, 0);
+      if (document.activeElement !== contentRef.current) {
+        setTimeout(() => {
+          contentRef.current?.focus();
+          // Move cursor to end
+          const range = document.createRange();
+          const sel = window.getSelection();
+          if (sel) {
+            range.selectNodeContents(contentRef.current);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+        }, 0);
+      }
     }
   }, [autoFocus]);
 
@@ -113,7 +115,16 @@ const InPlaceEditable = ({
           setIsFocused(false);
           onBlur();
         }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          // @ts-ignore
+          if (typeof e.currentTarget.showPicker === 'function') {
+            try {
+              // @ts-ignore
+              e.currentTarget.showPicker();
+            } catch (err) {}
+          }
+        }}
       />
     );
   }
@@ -380,7 +391,7 @@ export default function ConfirmRequirements() {
   }, []);
 
   const toggleExpand = (id: string) => {
-    setFields(prev => prev.map(f => f.id === id && f.status !== 'parsing' ? { ...f, isExpanded: !f.isExpanded } : f));
+    setFields(prev => prev.map(f => f.id === id && f.status !== 'parsing' && f.status !== 'streaming' ? { ...f, isExpanded: !f.isExpanded } : f));
   };
 
   const setEditingState = (id: string, editing: boolean) => {
@@ -513,7 +524,7 @@ export default function ConfirmRequirements() {
               <div className="flex-1 flex items-center justify-between bg-[#F7F7FD] rounded-lg px-4 py-2">
                 <div className="flex items-center gap-2">
                    <ParsingDots colorClass="bg-[#5B55EA]" />
-                   <span className="text-sm font-medium text-[#5B55EA]">正在解析文件内容...</span>
+                   <span className="text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-500 bg-clip-text text-transparent">正在解析文件内容...</span>
                 </div>
                 <div className="flex items-center gap-3 w-48">
                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -546,19 +557,19 @@ export default function ConfirmRequirements() {
                 return (
                   <div key={field.id} id={`field-${field.id}`} className="border-b border-dashed border-gray-200 last:border-b-0 group">
                     <div 
-                      className={`flex items-center justify-between sticky top-0 bg-white z-10 pt-5 pb-4 -mx-6 px-6 ${!isParsing ? 'cursor-pointer select-none' : ''}`}
+                      className={`flex items-center justify-between sticky top-0 bg-white z-10 pt-5 pb-4 -mx-6 px-6 ${!isParsingOrStreaming ? 'cursor-pointer select-none' : ''}`}
                       onClick={() => toggleExpand(field.id)}
                     >
                       <div className="flex items-end gap-2">
-                        <h3 className={`text-sm font-bold leading-none ${isParsing ? 'text-blue-600' : 'text-gray-900 group-hover:text-blue-600'} transition-colors`}>{field.title}</h3>
-                        {!isParsing && field.status === 'completed' && hoveredFieldId === field.id && !field.isEditing && (
+                        <h3 className={`text-sm font-bold leading-none ${isParsingOrStreaming ? 'bg-gradient-to-r from-blue-600 to-purple-500 bg-clip-text text-transparent' : 'text-gray-900 group-hover:text-blue-600'} transition-colors`}>{field.title}</h3>
+                        {!isParsingOrStreaming && field.status === 'completed' && hoveredFieldId === field.id && !field.isEditing && (
                            <span className="text-[12px] text-gray-400 leading-none animate-in fade-in">点击可修改内容</span>
                         )}
                       </div>
                       {isParsingOrStreaming ? (
                         <div className="flex items-center gap-2 text-blue-500 text-xs font-medium">
                           <ParsingDots />
-                          <span>解析中...</span>
+                          <span className="bg-gradient-to-r from-blue-600 to-purple-500 bg-clip-text text-transparent">解析中...</span>
                         </div>
                       ) : (
                         <ChevronUp className={`text-gray-400 transition-transform duration-300 ${!field.isExpanded ? 'rotate-180' : ''}`} size={16} />
